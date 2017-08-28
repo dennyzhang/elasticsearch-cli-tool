@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-03-27>
-## Updated: Time-stamp: <2017-08-28 15:19:23>
+## Updated: Time-stamp: <2017-08-28 16:05:05>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -56,9 +56,10 @@ list_indices "$es_ip" "$es_port"
 tmp_dir="/tmp/${old_index_name}"
 [ -d "$tmp_dir" ] || mkdir -p "$tmp_dir"
 
-# TODO: update setting
-log "Get setting and mappings of old index to ${tmp_dir}/create.json"
+create_json_file="${tmp_dir}/${old_index_name}_SettingsAndMappings.json"
 
+log "Get setting and mappings of old index to ${create_json_file}"
+cd "${tmp_dir}"
 curl "http://${es_ip}:${es_port}/${old_index_name}/_settings" | \
     jq ".[] | .settings.index.number_of_shards=\"${shard_count}\" | .settings.index.number_of_replicas=\"${replica_count}\"" \
        > "${tmp_dir}/settings.json"
@@ -66,20 +67,28 @@ curl "http://${es_ip}:${es_port}/${old_index_name}/_settings" | \
 curl "http://${es_ip}:${es_port}/${old_index_name}/_mapping" \
     | jq '.[]' > "${tmp_dir}/mapping.json"
 
-cd "${tmp_dir}"
-
 cat mapping.json | jq --sort-keys '.' > mapping_sorted.json
 
-################################################################################
-# TODO: run the hook
-java -jar /root/fix-mappings-reindex-2.0.jar "$index_type" "${old_index_name}" ./mapping_sorted.json ./settings.json | tee -a "$log_file"
+cat "mapping_sorted.json" "settings.json" \
+    | jq --slurp '.[0] * .[1]' > "${create_json_file}"
 
-if tail -n 10 "$log_file" | grep -i "ERROR"; then
-    log "error is found when running java command"
-    exit 1
+################################################################################
+# run the hook
+if [ -n "$command_before_create" ]; then
+    export OLD_INDEX_NAME="$old_index_name"
+    export MAPPING_JSON_FILE="${tmp_dir}/mapping_sorted.json"
+    export SETTINGS_JSON_FILE="${tmp_dir}/settings.json"
+
+    eval "$command_before_create" | tee -a "$log_file"
+    # java -jar /root/fix-mappings-reindex-2.0.jar "$index_type" "${old_index_name}" ./mapping_sorted.json ./settings.json | tee -a "$log_file"
+
+    if tail -n 10 "$log_file" | grep -i "ERROR"; then
+        log "error is found when running command: $command_before_create"
+        exit 1
+    fi
 fi
 
-create_json_file="${old_index_name}_SettingsAndMappings.json"
+# create_json_file="${old_index_name}_SettingsAndMappings.json"
 ################################################################################
 create_timeout="30m"
 log "create new index with settings and mappings"

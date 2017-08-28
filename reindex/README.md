@@ -9,3 +9,6 @@ Entrypoint: reindex.sh
 
 Notice:
 - After updating alias, we will close old indices. But won't delete them.
+
+# Hook: before create index
+Global envs:

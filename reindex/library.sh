@@ -4,7 +4,7 @@
 ## Description :
 ## --
 ## Created : <2017-06-13>
-## Updated: Time-stamp: <2017-08-28 12:40:50>
+## Updated: Time-stamp: <2017-08-28 17:19:12>
 ##-------------------------------------------------------------------
 function is_es_red() {
     local es_ip=${1?}
@@ -115,7 +115,7 @@ function assert_es_not_red() {
 function assert_index_not_exists() {
     local es_ip=${1?}
     local es_port=${2?}
-    local index_name=${2?}
+    local index_name=${3?}
     if [ "$(is_es_index_exists "$es_ip" "$es_port" "$index_name")" = "no" ]; then
         echo "ERROR: index($index_name) doesn't exist."
         exit 1
