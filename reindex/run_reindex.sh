@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-08-28 15:14:13>
+## Updated: Time-stamp: <2017-08-28 17:29:04>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -16,12 +16,12 @@ new_index_name=${2?}
 index_alias_name=${3?}
 es_port=${4?}
 es_ip=${5:-""}
-whether_update_alias=${6:-"no"}
-whether_skip_reindex=${7:-"no"}
+avoid_update_alias=${6:-"yes"}
+avoid_skip_reindex=${7:-"no"}
 
 log "=============== Run re-index"
 log "old_index_name: $old_index_name, new_index_name: $new_index_name, index_alias_name: $index_alias_name"
-log "whether_update_alias: $whether_update_alias, whether_skip_reindex: $whether_skip_reindex"
+log "avoid_update_alias: $avoid_update_alias, avoid_skip_reindex: $avoid_skip_reindex"
 
 ################################################################################
 # Set default values
@@ -55,7 +55,7 @@ list_indices "$es_ip" "$es_port"
 assert_index_status "$es_ip" "$es_port" "$new_index_name"
 ################################################################################
 
-if [ "$whether_skip_reindex" = "no" ]; then
+if [ "$avoid_skip_reindex" = "no" ]; then
     log "Reindex index. Attention: this will take a very long time, if the index is big"
     time curl -XPOST "http://${es_ip}:${es_port}/_reindex?pretty" -d "
      {
@@ -87,7 +87,7 @@ fi
 # # Check status
 # time curl -XGET "http://${es_ip}:${es_port}/_cat/indices?v"
 
-if [ "$whether_update_alias" = "yes" ]; then
+if [ "$avoid_update_alias" = "no" ]; then
     log "Add index to existing alias and remove old index from that alias. alias: $index_alias_name"
     time curl -XPOST "http://${es_ip}:${es_port}/_aliases" -d "
 {
