@@ -7,7 +7,38 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-08-28 12:42:54>
+## Updated: Time-stamp: <2017-08-28 14:23:05>
 ##-------------------------------------------------------------------
+# es_index_list, es_ip, es_port
+# whether_update_alias: yes/no
+# avoid_create_new_index: yes/no
+es_ip=${1?}
+es_port=${2?}
+# yes/no
+whether_update_alias=${3?}
+# yes/no
+avoid_create_new_index=${4?}
+whether_skip_reindex=${5?}
+new_es_index_suffix=${6?}
+es_index_list=${7?}
+shard_count=${8:-""}
 
+wait_seconds=30
+
+for old_index_name in $es_index_list; do
+    # From master-index-799e458055c611e6bb000401f8d88101 to master-index-799e458055c611e6bb000401f8d88101-new3
+    # From master-index-799e458055c611e6bb000401f8d88101-new2 to master-index-799e458055c611e6bb000401f8d88101-new3
+    new_index_name="${old_index_name%%-new*}-${new_es_index_suffix}"
+    # From master-index-799e458055c611e6bb000401f8d88101-new3 to master-799e458055c611e6bb000401f8d88101
+    index_alias_name=$(echo "${new_index_name%%-new*}" | sed "s/-index//g")
+    if [ "$avoid_create_new_index" = "no" ]; then
+        echo "=============== Create new index: $new_index_name"
+        bash -ex ./create_index_from_old_v2.sh "$old_index_name" "$new_index_name" "$es_port" "$es_ip" "$shard_count"
+        echo "sleep $wait_seconds seconds for new ES index($new_index_name) to be up and running"
+        sleep "$wait_seconds"
+    fi
+    echo "=============== ES reindex: old_index_name($old_index_name), new_index_name($new_index_name), index_alias_name($index_alias_name), whether_update_alias($whether_update_alias)."
+    bash -ex ./es_reindex.sh "$old_index_name" "$new_index_name" "$index_alias_name" \
+         "$es_port" "$whether_update_alias" "$es_ip" "$whether_skip_reindex"
+done
 ## File : reindex.sh ends
