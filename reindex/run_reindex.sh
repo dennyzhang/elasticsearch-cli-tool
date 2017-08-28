@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-08-28 14:53:55>
+## Updated: Time-stamp: <2017-08-28 15:14:13>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -118,7 +118,6 @@ if [ "$whether_update_alias" = "yes" ]; then
 fi
 
 check_alias_by_index_name "$es_ip" "$es_port" "$(echo "$old_index_name" | sed "s/.*-index-//g")"
-
 list_indices "$es_ip" "$es_port"
 
 # TODO: Delete index
