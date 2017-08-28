@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-08-28 12:41:17>
+## Updated: Time-stamp: <2017-08-28 14:53:55>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -19,8 +19,9 @@ es_ip=${5:-""}
 whether_update_alias=${6:-"no"}
 whether_skip_reindex=${7:-"no"}
 
-echo "old_index_name: $old_index_name, new_index_name: $new_index_name, index_alias_name: $index_alias_name"
-echo "whether_update_alias: $whether_update_alias, whether_skip_reindex: $whether_skip_reindex"
+log "=============== Run re-index"
+log "old_index_name: $old_index_name, new_index_name: $new_index_name, index_alias_name: $index_alias_name"
+log "whether_update_alias: $whether_update_alias, whether_skip_reindex: $whether_skip_reindex"
 
 ################################################################################
 # Set default values

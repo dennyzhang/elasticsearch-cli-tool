@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-03-27>
-## Updated: Time-stamp: <2017-08-28 12:43:07>
+## Updated: Time-stamp: <2017-08-28 14:53:18>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -15,8 +15,9 @@ old_index_name=${1?}
 new_index_name=${2?}
 es_port=${3?}
 es_ip=${4:-""}
-shard_count=${5:-""}
-replica_count=${6:-""}
+command_before_create=${5:-""}
+shard_count=${6:-""}
+replica_count=${7:-""}
 
 ################################################################################
 # Set default values
@@ -48,7 +49,7 @@ assert_index_not_exists "$es_ip" "$es_port" "$old_index_name"
 assert_index_exists "$es_ip" "$es_port" "$new_index_name"
 
 ################################################################################
-log "old_index_name: $old_index_name, new_index_name: $new_index_name"
+log "=============== Create new index. old_index_name: $old_index_name, new_index_name: $new_index_name"
 
 list_indices "$es_ip" "$es_port"
 
