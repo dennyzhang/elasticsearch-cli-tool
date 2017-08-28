@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-03-27>
-## Updated: Time-stamp: <2017-08-28 14:53:18>
+## Updated: Time-stamp: <2017-08-28 15:19:23>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -72,7 +72,7 @@ cat mapping.json | jq --sort-keys '.' > mapping_sorted.json
 
 ################################################################################
 # TODO: run the hook
-java -jar /root/fix-mappings-reindex-1.0.jar "$index_type" "${old_index_name}" ./mapping_sorted.json ./settings.json | tee -a "$log_file"
+java -jar /root/fix-mappings-reindex-2.0.jar "$index_type" "${old_index_name}" ./mapping_sorted.json ./settings.json | tee -a "$log_file"
 
 if tail -n 10 "$log_file" | grep -i "ERROR"; then
     log "error is found when running java command"
