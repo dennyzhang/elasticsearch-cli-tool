@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-08-28 14:52:59>
+## Updated: Time-stamp: <2017-08-28 15:12:54>
 ##-------------------------------------------------------------------
 es_ip=${1?}
 es_port=${2?}
@@ -36,6 +36,6 @@ for old_index_name in $es_index_list; do
     fi
 
     bash -ex ./run_reindex.sh "$old_index_name" "$new_index_name" "$index_alias_name" \
-         "$es_port" "$whether_update_alias" "$es_ip" "$whether_skip_reindex"
+         "$es_port" "$es_ip" "$whether_update_alias" "$whether_skip_reindex"
 done
 ## File : reindex.sh ends
