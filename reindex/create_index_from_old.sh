@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-03-27>
-## Updated: Time-stamp: <2017-08-28 16:05:05>
+## Updated: Time-stamp: <2017-08-28 18:01:05>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -56,7 +56,7 @@ list_indices "$es_ip" "$es_port"
 tmp_dir="/tmp/${old_index_name}"
 [ -d "$tmp_dir" ] || mkdir -p "$tmp_dir"
 
-create_json_file="${tmp_dir}/${old_index_name}_SettingsAndMappings.json"
+create_json_file="${tmp_dir}/combined.json"
 
 log "Get setting and mappings of old index to ${create_json_file}"
 cd "${tmp_dir}"
@@ -78,6 +78,7 @@ if [ -n "$command_before_create" ]; then
     export OLD_INDEX_NAME="$old_index_name"
     export MAPPING_JSON_FILE="${tmp_dir}/mapping_sorted.json"
     export SETTINGS_JSON_FILE="${tmp_dir}/settings.json"
+    export COMBINED_JSON_FILE="$create_json_file"
 
     eval "$command_before_create" | tee -a "$log_file"
     # java -jar /root/fix-mappings-reindex-2.0.jar "$index_type" "${old_index_name}" ./mapping_sorted.json ./settings.json | tee -a "$log_file"
@@ -88,12 +89,11 @@ if [ -n "$command_before_create" ]; then
     fi
 fi
 
-# create_json_file="${old_index_name}_SettingsAndMappings.json"
 ################################################################################
 create_timeout="30m"
 log "create new index with settings and mappings"
 time curl -XPOST "http://${es_ip}:${es_port}/${new_index_name}?timeout=${create_timeout}&wait_for_active_shards=all" \
-     -d @"${tmp_dir}/${create_json_file}" | tee -a "$log_file"
+     -d @"${create_json_file}" | tee -a "$log_file"
 echo >> "$log_file"
 
 if tail -n 1 "$log_file" | grep "\"acknowledged\"*:*true"; then
