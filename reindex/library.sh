@@ -4,7 +4,7 @@
 ## Description :
 ## --
 ## Created : <2017-06-13>
-## Updated: Time-stamp: <2017-08-29 20:23:35>
+## Updated: Time-stamp: <2017-08-29 20:26:46>
 ##-------------------------------------------------------------------
 function is_es_red() {
     local es_ip=${1?}
@@ -86,10 +86,9 @@ function list_indices() {
 function check_alias_by_index_name() {
     local es_ip=${1?}
     local es_port=${2?}
-    local check_pattern=${3?}
-    echo "List all alias for $check_pattern"
-    curl -XGET "http://${es_ip}:${es_port}/_aliases?pretty" \
-        | grep -C 10 "$check_pattern"
+    local index_alias_name=${3?}
+    echo "List all alias for $index_alias_name"
+    curl -XGET "http://${es_ip}:${es_port}/_alias/$index_alias_name"
 }
 ################################################################################
 # Precheck and Assertions

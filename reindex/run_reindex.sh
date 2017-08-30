@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-08-28 17:29:04>
+## Updated: Time-stamp: <2017-08-29 20:25:04>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -117,7 +117,7 @@ if [ "$avoid_update_alias" = "no" ]; then
     curl -XPOST "http://${es_ip}:${es_port}/${old_index_name}/_close" | tee -a "$log_file"
 fi
 
-check_alias_by_index_name "$es_ip" "$es_port" "$(echo "$old_index_name" | sed "s/.*-index-//g")"
+check_alias_by_index_name "$es_ip" "$es_port" "$index_alias_name"
 list_indices "$es_ip" "$es_port"
 
 # TODO: Delete index
