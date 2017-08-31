@@ -4,7 +4,7 @@
 ## Description :
 ## --
 ## Created : <2017-06-13>
-## Updated: Time-stamp: <2017-08-29 20:26:46>
+## Updated: Time-stamp: <2017-08-31 16:31:46>
 ##-------------------------------------------------------------------
 function is_es_red() {
     local es_ip=${1?}
@@ -134,7 +134,7 @@ function assert_index_exists() {
 function assert_index_status() {
     local es_ip=${1?}
     local es_port=${2?}
-    local index_name=${2?}
+    local index_name=${3?}
 
     if [ "$(curl "$es_ip:$es_port/_cat/shards?v" | grep "${index_name}" | grep -c -v STARTED)" = "0" ]; then
         echo "index(${index_name}) is up and running"
