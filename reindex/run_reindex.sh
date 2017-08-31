@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-08-29 20:25:04>
+## Updated: Time-stamp: <2017-08-31 14:34:18>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -18,10 +18,11 @@ es_port=${4?}
 es_ip=${5:-""}
 avoid_update_alias=${6:-"yes"}
 avoid_skip_reindex=${7:-"no"}
+avoid_close_index=${8:-"yes"}
 
 log "=============== Run re-index"
 log "old_index_name: $old_index_name, new_index_name: $new_index_name, index_alias_name: $index_alias_name"
-log "avoid_update_alias: $avoid_update_alias, avoid_skip_reindex: $avoid_skip_reindex"
+log "avoid_update_alias: $avoid_update_alias, avoid_skip_reindex: $avoid_skip_reindex, avoid_close_index: $avoid_close_index"
 
 ################################################################################
 # Set default values
@@ -113,8 +114,10 @@ if [ "$avoid_update_alias" = "no" ]; then
         exit 1
     fi
 
-    # Close index: only after no requests access old index, we can close it
-    curl -XPOST "http://${es_ip}:${es_port}/${old_index_name}/_close" | tee -a "$log_file"
+    if [ "$avoid_close_index" = "no" ]; then
+        # Close index: only after no requests access old index, we can close it
+        curl -XPOST "http://${es_ip}:${es_port}/${old_index_name}/_close" | tee -a "$log_file"
+    fi
 fi
 
 check_alias_by_index_name "$es_ip" "$es_port" "$index_alias_name"
