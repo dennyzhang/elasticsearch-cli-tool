@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-08-31 14:34:18>
+## Updated: Time-stamp: <2017-08-31 17:28:33>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -109,7 +109,7 @@ if [ "$avoid_update_alias" = "no" ]; then
     if tail -n 1 "$log_file" | grep "\"acknowledged\"*:*true"; then
         log "keep going with the following process"
     else
-        log "ERROR to create alias"
+        log "ERROR to update alias"
         tail -n 5 "$log_file"
         exit 1
     fi
