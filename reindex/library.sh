@@ -4,18 +4,22 @@
 ## Description :
 ## --
 ## Created : <2017-06-13>
-## Updated: Time-stamp: <2017-08-31 16:31:46>
+## Updated: Time-stamp: <2017-08-31 17:03:33>
 ##-------------------------------------------------------------------
 function is_es_red() {
     local es_ip=${1?}
     local es_port=${2?}
+    # TODO: better implementation
     if curl "$es_ip:$es_port/_cluster/health?pretty" | grep red 1>/dev/null 2>&1; then
         # add a sleep and try again. Sleep for 5 minutes
         sleep 300
         if curl "$es_ip:$es_port/_cluster/health?pretty" | grep red 1>/dev/null 2>&1; then
-            echo "yes"
-        else
-            echo "no"
+            sleep 300
+            if curl "$es_ip:$es_port/_cluster/health?pretty" | grep red 1>/dev/null 2>&1; then
+                echo "yes"
+            else
+                echo "no"
+            fi
         fi
     else
         echo "no"
