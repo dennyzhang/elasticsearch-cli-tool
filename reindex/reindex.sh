@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-08-31 17:07:07>
+## Updated: Time-stamp: <2017-08-31 18:47:18>
 ##-------------------------------------------------------------------
 es_ip=${1?}
 es_port=${2?}
@@ -20,7 +20,7 @@ es_index_list=${8?}
 command_before_create=${9:-""}
 shard_count=${10:-""}
 
-wait_seconds=30
+wait_seconds=120
 
 for old_index_name in $es_index_list; do
     # From master-index-799e458055c611e6bb000401f8d88101 to master-index-799e458055c611e6bb000401f8d88101-new3
@@ -32,9 +32,8 @@ for old_index_name in $es_index_list; do
         bash -ex ./create_index_from_old.sh "$old_index_name" "$new_index_name" "$es_port" "$es_ip" \
              "$command_before_create" "$shard_count"
 
-        # TODO: better way instead of blind wait
         echo "sleep $wait_seconds seconds for new ES index($new_index_name) to be up and running"
-        sleep "$wait_seconds"
+        wait_for_index_up "$es_ip" "$es_port" "$new_index_name" "$wait_seconds"
     fi
 
     bash -ex ./run_reindex.sh "$old_index_name" "$new_index_name" "$index_alias_name" \
