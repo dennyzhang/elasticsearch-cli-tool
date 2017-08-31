@@ -4,7 +4,7 @@
 ## Description :
 ## --
 ## Created : <2017-06-13>
-## Updated: Time-stamp: <2017-08-31 18:46:37>
+## Updated: Time-stamp: <2017-08-31 18:49:39>
 ##-------------------------------------------------------------------
 function is_es_red() {
     local es_ip=${1?}
@@ -93,23 +93,6 @@ function check_alias_by_index_name() {
     local index_alias_name=${3?}
     echo "List all alias for $index_alias_name"
     curl -XGET "http://${es_ip}:${es_port}/_alias/$index_alias_name"
-}
-
-function wait_for_index_up() {
-    local es_ip=${1?}
-    local es_port=${2?}
-    local index_name=${3?}
-    local timeout_seconds=${4:-30}
-
-    local wait_interval=5
-    for((i=0; i<timeout_seconds; i++)); do
-        if [ "$(curl "$es_ip:$es_port/_cat/shards?v" | grep "${index_name}" | grep -c -v STARTED)" = "0" ]; then
-            return
-        fi
-        sleep "$wait_interval"
-    done
-    echo "index($index_name) is not up after waiting for ${timeout_seconds}"
-    exit 1
 }
 
 ################################################################################

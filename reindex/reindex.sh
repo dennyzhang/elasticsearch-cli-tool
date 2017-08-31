@@ -7,8 +7,27 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-08-31 18:47:18>
+## Updated: Time-stamp: <2017-08-31 18:49:59>
 ##-------------------------------------------------------------------
+################################################################################
+function wait_for_index_up() {
+    local es_ip=${1?}
+    local es_port=${2?}
+    local index_name=${3?}
+    local timeout_seconds=${4:-30}
+
+    local wait_interval=5
+    for((i=0; i<timeout_seconds; i++)); do
+        if [ "$(curl "$es_ip:$es_port/_cat/shards?v" | grep "${index_name}" | grep -c -v STARTED)" = "0" ]; then
+            return
+        fi
+        sleep "$wait_interval"
+    done
+    echo "index($index_name) is not up after waiting for ${timeout_seconds}"
+    exit 1
+}
+################################################################################
+
 es_ip=${1?}
 es_port=${2?}
 avoid_update_alias=${3?} # yes/no
