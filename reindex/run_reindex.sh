@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-08-31 17:28:33>
+## Updated: Time-stamp: <2017-08-31 17:45:13>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -113,11 +113,11 @@ if [ "$avoid_update_alias" = "no" ]; then
         tail -n 5 "$log_file"
         exit 1
     fi
+fi
 
-    if [ "$avoid_close_index" = "no" ]; then
-        # Close index: only after no requests access old index, we can close it
-        curl -XPOST "http://${es_ip}:${es_port}/${old_index_name}/_close" | tee -a "$log_file"
-    fi
+if [ "$avoid_close_index" = "no" ]; then
+    # Close index: only after no requests access old index, we can close it
+    curl -XPOST "http://${es_ip}:${es_port}/${old_index_name}/_close" | tee -a "$log_file"
 fi
 
 check_alias_by_index_name "$es_ip" "$es_port" "$index_alias_name"
