@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-08-31 18:49:59>
+## Updated: Time-stamp: <2017-09-01 11:56:31>
 ##-------------------------------------------------------------------
 ################################################################################
 function wait_for_index_up() {
@@ -32,7 +32,7 @@ es_ip=${1?}
 es_port=${2?}
 avoid_update_alias=${3?} # yes/no
 avoid_create_new_index=${4?} # yes/no
-avoid_skip_reindex=${5?} # yes/no
+avoid_run_reindex=${5?} # yes/no
 avoid_close_index=${6?}
 new_es_index_suffix=${7?}
 es_index_list=${8?}
@@ -56,6 +56,6 @@ for old_index_name in $es_index_list; do
     fi
 
     bash -ex ./run_reindex.sh "$old_index_name" "$new_index_name" "$index_alias_name" \
-         "$es_port" "$es_ip" "$avoid_update_alias" "$avoid_skip_reindex" "$avoid_close_index"
+         "$es_port" "$es_ip" "$avoid_update_alias" "$avoid_run_reindex" "$avoid_close_index"
 done
 ## File : reindex.sh ends

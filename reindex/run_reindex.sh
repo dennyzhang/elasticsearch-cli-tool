@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-08-31 17:45:13>
+## Updated: Time-stamp: <2017-09-01 11:56:35>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -17,12 +17,12 @@ index_alias_name=${3?}
 es_port=${4?}
 es_ip=${5:-""}
 avoid_update_alias=${6:-"yes"}
-avoid_skip_reindex=${7:-"no"}
+avoid_run_reindex=${7:-"no"}
 avoid_close_index=${8:-"yes"}
 
 log "=============== Run re-index"
 log "old_index_name: $old_index_name, new_index_name: $new_index_name, index_alias_name: $index_alias_name"
-log "avoid_update_alias: $avoid_update_alias, avoid_skip_reindex: $avoid_skip_reindex, avoid_close_index: $avoid_close_index"
+log "avoid_update_alias: $avoid_update_alias, avoid_run_reindex: $avoid_run_reindex, avoid_close_index: $avoid_close_index"
 
 ################################################################################
 # Set default values
@@ -56,7 +56,7 @@ list_indices "$es_ip" "$es_port"
 assert_index_status "$es_ip" "$es_port" "$new_index_name"
 ################################################################################
 
-if [ "$avoid_skip_reindex" = "no" ]; then
+if [ "$avoid_run_reindex" = "no" ]; then
     log "Reindex index. Attention: this will take a very long time, if the index is big"
     time curl -XPOST "http://${es_ip}:${es_port}/_reindex?pretty" -d "
      {
