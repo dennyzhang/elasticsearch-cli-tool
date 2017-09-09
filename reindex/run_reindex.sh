@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-09-01 11:56:35>
+## Updated: Time-stamp: <2017-09-08 23:30:46>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -29,9 +29,9 @@ log "avoid_update_alias: $avoid_update_alias, avoid_run_reindex: $avoid_run_rein
 log_file="/var/log/run_reindex_sh_${BUILD_ID}.log"
 
 if [ -z "$REINDEX_BATCH_SIZE" ]; then
-    # By default _reindex uses scroll batches of 100. Here we change it to 500
+    # By default _reindex uses scroll batches of 100. Here we change it to later
     # https://www.elastic.co/guide/en/elasticsearch/reference/2.3/docs-reindex.html
-    REINDEX_BATCH_SIZE="500"
+    REINDEX_BATCH_SIZE="800"
 fi
 
 # if $es_ip is not given, use ip of eth0 as default
