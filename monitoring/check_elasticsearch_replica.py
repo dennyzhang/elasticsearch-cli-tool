@@ -8,9 +8,10 @@
 ## Author : Denny <contact@dennyzhang.com>
 ## Description :
 ##    Check all ES indices have more than $min_replica_count replicas
+## Read more: https://www.dennyzhang.com/es_shard
 ## --
 ## Created : <2017-02-24>
-## Updated: Time-stamp: <2017-09-07 21:35:00>
+## Updated: Time-stamp: <2017-09-12 10:45:12>
 ##-------------------------------------------------------------------
 import argparse
 import requests

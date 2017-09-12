@@ -9,9 +9,10 @@
 ## Description :
 ##    Make sure ES indices have enough shards.
 ##    Make sure no same shard(primary, replica) are in the same node, to avoid SPOF
+## Read more: https://www.dennyzhang.com/es_shard
 ## --
 ## Created : <2017-02-24>
-## Updated: Time-stamp: <2017-09-07 21:35:00>
+## Updated: Time-stamp: <2017-09-12 10:45:16>
 ##-------------------------------------------------------------------
 import argparse
 import requests

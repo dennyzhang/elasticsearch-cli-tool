@@ -3,7 +3,8 @@ Travis CI Status: [![Build Status](https://travis-ci.org/DennyZhang/elasticsearc
 # python-elasticsearch-tool
 Python tools for elasticsearch
 
-Read more: https://www.dennyzhang.com/es_shard
+# Read more
+- Examine Your Elasticsearch Shards: https://www.dennyzhang.com/es_shard
 
 Discuss with Denny in [LinkedIn](https://www.linkedin.com/in/dennyzhang001) or [Blog](https://www.dennyzhang.com).
 
