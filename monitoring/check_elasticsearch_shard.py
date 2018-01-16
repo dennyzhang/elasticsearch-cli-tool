@@ -5,14 +5,14 @@
 ##   https://www.dennyzhang.com/wp-content/mit_license.txt
 ##
 ## File : check_elasticsearch_shard.py
-## Author : Denny <contact@dennyzhang.com>
+## Author : Denny <https://www.dennyzhang.com/contact>
 ## Description :
 ##    Make sure ES indices have enough shards.
 ##    Make sure no same shard(primary, replica) are in the same node, to avoid SPOF
 ## Read more: https://www.dennyzhang.com/es_shard
 ## --
 ## Created : <2017-02-24>
-## Updated: Time-stamp: <2017-09-12 10:45:16>
+## Updated: Time-stamp: <2017-11-13 11:00:53>
 ##-------------------------------------------------------------------
 import argparse
 import requests
