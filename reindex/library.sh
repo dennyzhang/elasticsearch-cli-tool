@@ -4,7 +4,7 @@
 ## Description :
 ## --
 ## Created : <2017-06-13>
-## Updated: Time-stamp: <2018-01-29 11:14:40>
+## Updated: Time-stamp: <2018-01-29 12:24:05>
 ##-------------------------------------------------------------------
 function is_es_red() {
     local es_ip=${1?}
@@ -98,6 +98,15 @@ function check_alias_by_index_name() {
         echo "alias $index_alias_name is found"
     else
         echo "Error to check alias: ${index_alias_name}. errormsg: $output"
+        exit 1
+    fi
+
+    # check item count from alias name
+    output=$(curl "http://${es_ip}:${es_port}/$index_alias_name/_count")
+    if echo "$output" | grep -v "error" 1>/dev/null 2>&1; then
+        echo "get document count of alias $index_alias_name is ok"
+    else
+        echo "Error to get document count from: ${index_alias_name}. errormsg: $output"
         exit 1
     fi
 }
