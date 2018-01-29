@@ -4,7 +4,7 @@
 ## Description :
 ## --
 ## Created : <2017-06-13>
-## Updated: Time-stamp: <2018-01-16 16:32:06>
+## Updated: Time-stamp: <2018-01-29 11:14:40>
 ##-------------------------------------------------------------------
 function is_es_red() {
     local es_ip=${1?}
@@ -93,9 +93,9 @@ function check_alias_by_index_name() {
     local index_alias_name=${3?}
     echo "List all alias for $index_alias_name"
 
-    output=$(curl -XGET "http://${es_ip}:${es_port}/_alias/$index_alias_name")
-    if echo "$output" | grep "$index_alias_name" 1>/dev/null 2>&1; then
-        echo "$output"
+    output=$(curl -I "http://${es_ip}:${es_port}/_alias/$index_alias_name")
+    if echo "$output" | grep "200 OK" 1>/dev/null 2>&1; then
+        echo "alias $index_alias_name is found"
     else
         echo "Error to check alias: ${index_alias_name}. errormsg: $output"
         exit 1
