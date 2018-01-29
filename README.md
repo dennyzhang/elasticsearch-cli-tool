@@ -8,7 +8,9 @@
 Python tools for elasticsearch
 
 - [reindex](reindex): bash script to reindex elasticsearch indicex
-- [monitoring](monitoring): elasticsearch monitoring
+- [monitoring](monitoring): elasticsearch monitoring.
 - [confirm_all_es_alias.sh](confirm_all_es_alias.sh): confirm all alias point to right index. And read operations succeed.
+- [elasticsearch_force_merge.py](elasticsearch_force_merge.py): Identity indices with lots of deleted docs, then run selective force-merge.
+- [elasticsearch_shard_summary.sh](elasticsearch_shard_summary.sh): show es shard summary with one command.
 
 Code is licensed under [MIT License](https://www.dennyzhang.com/wp-content/mit_license.txt).
