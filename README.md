@@ -8,7 +8,7 @@
 Python tools for elasticsearch
 
 - [reindex](reindex): bash script to reindex elasticsearch indicex
-- [confirm_all_es_alias.sh](confirm_all_es_alias.sh): confirm all alias point to right index. And read operations succeed.
 - [monitoring](monitoring): elasticsearch monitoring
+- [confirm_all_es_alias.sh](confirm_all_es_alias.sh): confirm all alias point to right index. And read operations succeed.
 
 Code is licensed under [MIT License](https://www.dennyzhang.com/wp-content/mit_license.txt).
