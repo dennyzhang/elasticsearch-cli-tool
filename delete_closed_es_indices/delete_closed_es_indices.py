@@ -9,11 +9,11 @@
 ## Description :
 ## --
 ## Created : <2018-02-06>
-## Updated: Time-stamp: <2018-02-06 17:25:58>
+## Updated: Time-stamp: <2018-02-06 17:41:03>
 ##-------------------------------------------------------------------
 # pip install elasticsearch==2.3.0
 import argparse
-import sys
+import sys, time
 from elasticsearch import Elasticsearch
 ################################################################################
 NOT_EXISTS="NOT_EXISTS"
@@ -28,8 +28,17 @@ def index_status(es_instance, index_name):
 
 def wait_es_slowness(es_instance, max_wait_seconds, try_count=3):
     # TODO
+    for i in range(0, try_count):
+        time.sleep(max_wait_seconds)
     return True
 
+def get_list_from_string(string):
+    res = []
+    for entry in string.split('\n'):
+        entry = entry.strip()
+        if entry == "" or entry.startswith('#'): continue
+        res.append(entry)
+    return res
 ################################################################################
 def delete_closed_index(es_ip, es_port, index_list, max_wait_seconds):
     es_instance = Elasticsearch(["%s:%s"%(es_ip, es_port)])
@@ -60,14 +69,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--es_ip', required=True, help="Elasticsearch IP", type=str)
     parser.add_argument('--es_port', default='9200', help="Elasticsearch port", type=str)
+    parser.add_argument('--index_list', required=True, type=str, \
+                        help="Index list to be deleted. If any open index is detected, the whole process will be aborted.")
     parser.add_argument('--max_wait_seconds', dest='max_wait_seconds', default='5', \
                         help="Wait for ES slowness after index removal")
-    # TODO
-    parser.add_argument('--index_list', required=True, default='mdm-master,mdm-staging',
-                        help="Index list to be deleted. If open index is detected, the whole process will abort", type=str)
 
     l = parser.parse_args()
-    examine_only = l.examine_only
-    print "bucket_list: " + l.bucket_list
-    delete_closed_index(l.es_ip, l.es_port, l.index_list, l.max_wait_seconds)
+    delete_closed_index(l.es_ip, l.es_port, get_list_from_string(l.index_list), l.max_wait_seconds)
 ## File: delete_closed_es_indices.py ends
