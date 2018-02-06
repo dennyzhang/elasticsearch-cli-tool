@@ -9,29 +9,30 @@
 ## Description :
 ## --
 ## Created : <2018-02-06>
-## Updated: Time-stamp: <2018-02-06 15:37:43>
+## Updated: Time-stamp: <2018-02-06 15:45:46>
 ##-------------------------------------------------------------------
-# pip install elasticsearch
+# pip install elasticsearch==2.3.0
 import argparse
-import elasticsearch
 import sys
+from elasticsearch import Elasticsearch
 ################################################################################
-def detect_open_index(es_ip, es_port, index_name_list):
+def detect_open_index(es_instance, index_name_list):
     # TODO
     return (False, [])
 
-def delete_index(es_ip, es_port, index_name):
+def delete_index(es_instance, index_name):
     # TODO
     return False
 
-def wait_es_slowness(es_ip, es_port, max_wait_seconds, try_count=3):
+def wait_es_slowness(es_instance, max_wait_seconds, try_count=3):
     # TODO
     return True
 
 ################################################################################
 def delete_closed_index(es_ip, es_port, index_list, max_wait_seconds):
+    es_instance = Elasticsearch(["%s:%s"%(es_ip, es_port)])
     # precheck
-    (status, l) = detect_open_index(es_ip, es_port, index_name_list) is False:
+    (status, l) = detect_open_index(es_instance, index_name_list) is False:
     if status:
         print("ERROR: problematic input. Detected some open index: %s") % (','.join(l))
         sys.exit(1)
@@ -39,13 +40,13 @@ def delete_closed_index(es_ip, es_port, index_list, max_wait_seconds):
     # deal with each index
     for index_name in index_list:
         print("Delete index: %s" % (index_name))
-        (status, l) = detect_open_index(es_ip, es_port, [index_name]):
+        (status, l) = detect_open_index(es_instance, [index_name]):
         if status:
             print("ERROR: index(%s) is open. Abort the whole process." % (index_name))
             sys.exit(1)
-        if delete_index(es_ip, es_port, index_name) is False:
+        if delete_index(es_instance, index_name) is False:
             print("ERROR: deleting index(%s) has failed" % (index_name))
-        if wait_es_slowness(es_ip, es_port, max_wait_seconds) is False:
+        if wait_es_slowness(es_instance, max_wait_seconds) is False:
             print("ERROR: ES is slow after deleting index(%s)." % (index_name))
             sys.exit(1)
 
