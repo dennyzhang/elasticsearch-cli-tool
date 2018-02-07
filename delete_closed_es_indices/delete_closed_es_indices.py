@@ -10,7 +10,7 @@
 ##  python delete_closed_es_indices.py --index_list "$index_list"
 ## --
 ## Created : <2018-02-06>
-## Updated: Time-stamp: <2018-02-06 18:21:32>
+## Updated: Time-stamp: <2018-02-06 18:24:12>
 ##-------------------------------------------------------------------
 # pip install elasticsearch==2.3.0
 import argparse
@@ -67,9 +67,9 @@ def delete_closed_index(es_host, es_port, index_list, max_wait_seconds):
             print("ERROR: index(%s) should be closed. But its status is %s" % (index_name, status))
             sys.exit(1)
 
-        # output = es_instance.indices.delete(index=index_name)
-        # if output != {'acknowledged': True}:
-            # print("ERROR: deleting index(%s) has failed. output: %s" % (index_name, str(output)))
+        output = es_instance.indices.delete(index=index_name)
+        if output != {'acknowledged': True}:
+            print("ERROR: deleting index(%s) has failed. output: %s" % (index_name, str(output)))
 
         if wait_es_slowness(es_instance, max_wait_seconds) is False:
             print("ERROR: ES is slow after deleting index(%s)." % (index_name))
