@@ -11,4 +11,4 @@
 pip install -r requirements.txt
 ```
 
-<a href="https://www.dennyzhang.com"><img align="right" width="185" height="37" src="https://raw.githubusercontent.com/dennyzhang/elasticsearch-cli-tool/master/images/images/DeleteClosedESIndices.png"></a>
+<a href="https://www.dennyzhang.com"><img align="right" src="https://raw.githubusercontent.com/DennyZhang/elasticsearch-cli-tool/master/images/DeleteClosedESIndices.png"></a>
