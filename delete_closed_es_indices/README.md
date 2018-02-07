@@ -1,9 +1,8 @@
 - Why we need this script?
 ```
-- Support a list of closed indices, if not given delete all closed indices
-- Only support to delete closed indices
-- Detect how fast system returns
-- Track the status
+- Given a list of closed indices, delete them one by one with mimimum ES performance downgrade.
+- If some indices are open, abort the process
+- Track the deletion status
 ```
 
 - How to install?
