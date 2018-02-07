@@ -10,7 +10,7 @@
 ##  python delete_closed_es_indices.py --index_list "$index_list"
 ## --
 ## Created : <2018-02-06>
-## Updated: Time-stamp: <2018-02-06 18:24:12>
+## Updated: Time-stamp: <2018-02-06 19:24:42>
 ##-------------------------------------------------------------------
 # pip install elasticsearch==2.3.0
 import argparse
@@ -49,6 +49,7 @@ def get_list_from_string(string):
         if entry == "" or entry.startswith('#'): continue
         res.append(entry)
     return res
+
 ################################################################################
 def delete_closed_index(es_host, es_port, index_list, max_wait_seconds):
     es_instance = Elasticsearch(["%s:%s"%(es_host, es_port)])
