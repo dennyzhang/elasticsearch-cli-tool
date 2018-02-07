@@ -7,13 +7,14 @@
 ## File: delete_closed_es_indices.py
 ## Author : Denny <https://www.dennyzhang.com/contact>
 ## Description :
+##  python delete_closed_es_indices.py --index_list "$index_list"
 ## --
 ## Created : <2018-02-06>
-## Updated: Time-stamp: <2018-02-06 18:01:45>
+## Updated: Time-stamp: <2018-02-06 18:10:36>
 ##-------------------------------------------------------------------
 # pip install elasticsearch==2.3.0
 import argparse
-import sys, time
+import sys, time, socket
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import AuthorizationException
 ################################################################################
@@ -48,8 +49,8 @@ def get_list_from_string(string):
         res.append(entry)
     return res
 ################################################################################
-def delete_closed_index(es_ip, es_port, index_list, max_wait_seconds):
-    es_instance = Elasticsearch(["%s:%s"%(es_ip, es_port)])
+def delete_closed_index(es_host, es_port, index_list, max_wait_seconds):
+    es_instance = Elasticsearch(["%s:%s"%(es_host, es_port)])
     # precheck
     for index_name in index_list:
         status = index_status(es_instance, index_name)
@@ -75,7 +76,7 @@ def delete_closed_index(es_ip, es_port, index_list, max_wait_seconds):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--es_ip', required=True, help="Elasticsearch IP", type=str)
+    parser.add_argument('--es_host', help="Elasticsearch server IP or hostname", type=str)
     parser.add_argument('--es_port', default='9200', help="Elasticsearch port", type=str)
     parser.add_argument('--index_list', required=True, type=str, \
                         help="Index list to be deleted. If any open index is detected, the whole process will be aborted.")
@@ -83,5 +84,11 @@ if __name__ == '__main__':
                         help="Wait for ES slowness after index removal")
 
     l = parser.parse_args()
-    delete_closed_index(l.es_ip, l.es_port, get_list_from_string(l.index_list), l.max_wait_seconds)
+    es_host = l.es_host
+    # get ip of eth0, if es_host is not given
+    if es_host is None:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        es_host = s.getsockname()[0]
+    delete_closed_index(es_host, l.es_port, get_list_from_string(l.index_list), l.max_wait_seconds)
 ## File: delete_closed_es_indices.py ends
