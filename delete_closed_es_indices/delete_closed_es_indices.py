@@ -9,26 +9,34 @@
 ## Description :
 ## --
 ## Created : <2018-02-06>
-## Updated: Time-stamp: <2018-02-06 17:41:03>
+## Updated: Time-stamp: <2018-02-06 18:01:45>
 ##-------------------------------------------------------------------
 # pip install elasticsearch==2.3.0
 import argparse
 import sys, time
 from elasticsearch import Elasticsearch
+from elasticsearch.exceptions import AuthorizationException
 ################################################################################
 NOT_EXISTS="NOT_EXISTS"
 IS_CLOSED="IS_CLOSED"
 IS_OPEN="IS_OPEN"
 
 def index_status(es_instance, index_name):
-    if es_instance.indices.exists(index=index_name) is False:
+    if es_instance.indices.exists(index=index_name, expand_wildcards='all') is False:
         return NOT_EXISTS
-    # TODO
-    return False
+    # TODO: better way to get index status
+    try:
+        es_instance.indices.stats(index=index_name)
+    except AuthorizationException as e:
+        if e.error == 'index_closed_exception':
+            return IS_CLOSED
+        print("ERROR: unexpected error when checking index(%s), error: %s" % (index_name, str(e)))
+    return IS_OPEN
 
 def wait_es_slowness(es_instance, max_wait_seconds, try_count=3):
     # TODO
     for i in range(0, try_count):
+        print("Sleep %d seconds for ES slowness" % (max_wait_seconds))
         time.sleep(max_wait_seconds)
     return True
 
@@ -51,7 +59,7 @@ def delete_closed_index(es_ip, es_port, index_list, max_wait_seconds):
 
     # deal with each index
     for index_name in index_list:
-        print("Delete index: %s" % (index_name))
+        print("Deleting index: %s" % (index_name))
         status = index_status(es_instance, index_name)
         if status != IS_CLOSED:
             print("ERROR: index(%s) should be closed. But its status is %s" % (index_name, status))
@@ -71,7 +79,7 @@ if __name__ == '__main__':
     parser.add_argument('--es_port', default='9200', help="Elasticsearch port", type=str)
     parser.add_argument('--index_list', required=True, type=str, \
                         help="Index list to be deleted. If any open index is detected, the whole process will be aborted.")
-    parser.add_argument('--max_wait_seconds', dest='max_wait_seconds', default='5', \
+    parser.add_argument('--max_wait_seconds', dest='max_wait_seconds', type=int, default='5', \
                         help="Wait for ES slowness after index removal")
 
     l = parser.parse_args()
