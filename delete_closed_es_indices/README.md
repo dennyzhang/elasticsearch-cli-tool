@@ -1,3 +1,5 @@
+<a href="https://www.dennyzhang.com"><img align="right" src="https://raw.githubusercontent.com/DennyZhang/elasticsearch-cli-tool/master/images/DeleteClosedESIndices.png"></a>
+
 - Why we need this script?
 ```
 - Given a list of closed indices, delete them one by one
@@ -10,5 +12,3 @@
 ```
 pip install -r requirements.txt
 ```
-
-<a href="https://www.dennyzhang.com"><img align="right" src="https://raw.githubusercontent.com/DennyZhang/elasticsearch-cli-tool/master/images/DeleteClosedESIndices.png"></a>
