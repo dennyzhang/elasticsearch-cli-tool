@@ -1,1 +1,1 @@
-<a href="https://www.dennyzhang.com"><img align="right" src="https://raw.githubusercontent.com/DennyZhang/elasticsearch-cli-tool/master/images/RestartES.png"></a>
+<a href="https://www.dennyzhang.com"><img align="center" src="https://raw.githubusercontent.com/DennyZhang/elasticsearch-cli-tool/master/images/RestartES.png"></a>
