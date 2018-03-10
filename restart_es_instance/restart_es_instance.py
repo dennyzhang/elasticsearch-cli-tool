@@ -14,7 +14,7 @@
 ##   python ./restart_es_instance.py --es_host_mgmt 172.17.0.6 --es_port 9200 --es_host 172.17.0.5
 ## --
 ## Created : <2018-03-09>
-## Updated: Time-stamp: <2018-03-09 16:30:28>
+## Updated: Time-stamp: <2018-03-10 00:10:30>
 ##-------------------------------------------------------------------
 import sys
 import argparse, socket
@@ -170,5 +170,5 @@ if __name__ == '__main__':
             es_status = get_es_health(es_host_mgmt, es_port)
             print("ES status is %s. ES cluster should be loading shards now" % (es_status))
     except Exception as e:
-	    print "Unexpected error:%s, %s" % (sys.exc_info()[0], e)
+        print "Unexpected error:%s, %s" % (sys.exc_info()[0], e)
 ## File: restart_es_instance.py ends
