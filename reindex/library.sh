@@ -4,7 +4,7 @@
 ## Description :
 ## --
 ## Created : <2017-06-13>
-## Updated: Time-stamp: <2018-01-29 12:24:05>
+## Updated: Time-stamp: <2018-03-11 11:04:58>
 ##-------------------------------------------------------------------
 function is_es_red() {
     local es_ip=${1?}
@@ -160,7 +160,7 @@ function assert_index_status() {
     if [ "$(curl "$es_ip:$es_port/_cat/shards?v" | grep "${index_name}" | grep -c -v STARTED)" = "0" ]; then
         echo "index(${index_name}) is up and running"
     else
-        echo "index(${index_name}) is not up and running"
+        echo "Not all shards of index(${index_name}) is in stable and healthy state"
         exit 1
     fi
 }
