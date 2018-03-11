@@ -14,7 +14,7 @@
 ##   python ./restart_es_instance.py --es_host_mgmt 172.17.0.6 --es_port 9200 --es_host 172.17.0.5
 ## --
 ## Created : <2018-03-09>
-## Updated: Time-stamp: <2018-03-11 10:29:24>
+## Updated: Time-stamp: <2018-03-11 10:42:23>
 ##-------------------------------------------------------------------
 import sys
 import argparse, socket
@@ -61,8 +61,8 @@ def manage_es_service(action, retries=2, sleep_seconds=5):
     return True
 
 # https://www.elastic.co/guide/en/elasticsearch/guide/current/_rolling_restarts.html
-def update_es_allocation(es_host_mgmt, es_port, allocation_policy, retries=2, sleep_seconds=5):
-    print("Update ES shards allocation policy to %s" % (allocation_policy))
+def update_es_allocation(es_host_mgmt, es_port, allocation_policy, retries=3, sleep_seconds=10):
+    print("Update ES shards allocation policy to %s. retries count: %d" % (allocation_policy, retries))
     sys.stdout.flush()
     if allocation_policy not in ["all", "none"]:
         print("Error: unsupported allocation policy: %s" % (allocation_policy))
@@ -70,11 +70,16 @@ def update_es_allocation(es_host_mgmt, es_port, allocation_policy, retries=2, sl
 
     url = "http://%s:%s/_cluster/settings" % (es_host_mgmt, es_port)
     payload = {}
-    payload["transient"] = {}
-    payload["transient"]["cluster.routing.allocation.enable"] = allocation_policy
+    payload["persistent"] = {}
+    payload["persistent"]["cluster.routing.allocation.enable"] = allocation_policy
 
     r = requests.put(url, data = json.dumps(payload))
-    if r.status_code != 200: raise Exception("Fail to run REST API: %s. Content: %s" % (url, r.content))
+    if r.status_code != 200:
+        if retries != 0:
+            print("Warning: action fails. Having a retry")
+            return update_es_allocation(es_host_mgmt, es_port, allocation_policy, retries-1, sleep_seconds)
+        else:
+            raise Exception("Fail to run REST API: %s. Content: %s" % (url, r.content))
 
     print(r.content)
     content_json = json.loads(r.content)
@@ -140,8 +145,9 @@ def restart_es_instance(es_host_mgmt, es_port, es_host):
     if not manage_es_service("stop"): return False
     if not manage_es_service("start"): return False
     # add sleep for es slow start
-    sleep_seconds = 10
+    sleep_seconds = 15
     print("Sleep %d seconds, for ES slow start" % (sleep_seconds))
+    sys.stdout.flush()
     time.sleep(sleep_seconds)
     if not manage_es_service("status"): return False
     if not update_es_allocation(es_host_mgmt, es_port, "all"): return False
@@ -179,4 +185,5 @@ if __name__ == '__main__':
             print("ES status is %s. ES cluster should be loading shards now" % (es_status))
     except Exception as e:
         print("Unexpected error:%s, %s" % (sys.exc_info()[0], e))
+        sys.exit(1)
 ## File: restart_es_instance.py ends
