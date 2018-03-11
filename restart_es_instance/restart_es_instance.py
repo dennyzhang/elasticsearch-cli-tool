@@ -14,7 +14,7 @@
 ##   python ./restart_es_instance.py --es_host_mgmt 172.17.0.6 --es_port 9200 --es_host 172.17.0.5
 ## --
 ## Created : <2018-03-09>
-## Updated: Time-stamp: <2018-03-11 10:21:34>
+## Updated: Time-stamp: <2018-03-11 10:26:58>
 ##-------------------------------------------------------------------
 import sys
 import argparse, socket
@@ -61,6 +61,8 @@ def manage_es_service(action, retries=2, sleep_seconds=5):
 
 # https://www.elastic.co/guide/en/elasticsearch/guide/current/_rolling_restarts.html
 def update_es_allocation(es_host_mgmt, es_port, allocation_policy, retries=2, sleep_seconds=5):
+    print("Update ES shards allocation policy to %s" % (allocation_policy))
+    sys.stdout.flush()
     if allocation_policy not in ["all", "none"]:
         print("Error: unsupported allocation policy: %s" % (allocation_policy))
         return False
@@ -95,7 +97,9 @@ def update_es_allocation(es_host_mgmt, es_port, allocation_policy, retries=2, sl
         return True
 
 # https://www.elastic.co/guide/en/elasticsearch/guide/current/_rolling_restarts.html
-def es_flushed_sync(es_host_mgmt, es_port, retries=2, sleep_seconds=5):
+def es_flushed_sync(es_host_mgmt, es_port, retries=3, sleep_seconds=10):
+    print("Run flushed sync")
+    sys.stdout.flush()
     url = "http://%s:%s/_flush/synced" % (es_host_mgmt, es_port)
     r = requests.post(url)
     # TODO: HTTP may returns with "HTTP/1.1 409 Conflict"
