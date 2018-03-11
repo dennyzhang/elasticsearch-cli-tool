@@ -14,7 +14,7 @@
 ##   python ./restart_es_instance.py --es_host_mgmt 172.17.0.6 --es_port 9200 --es_host 172.17.0.5
 ## --
 ## Created : <2018-03-09>
-## Updated: Time-stamp: <2018-03-11 10:26:58>
+## Updated: Time-stamp: <2018-03-11 10:29:24>
 ##-------------------------------------------------------------------
 import sys
 import argparse, socket
@@ -46,6 +46,7 @@ def manage_es_service(action, retries=2, sleep_seconds=5):
         commands = ['service', 'elasticsearch', 'status']
 
     print("Run command: %s" % ' '.join(commands))
+    sys.stdout.flush()
     return_code = subprocess.call(commands)
     if return_code != 0:
         for i in range(retries):
@@ -120,7 +121,9 @@ def es_flushed_sync(es_host_mgmt, es_port, retries=3, sleep_seconds=10):
             
     if failed_shards_count != 0:
         print("ERROR: %d shards failed to finish flushed sync. Content: %s" % (failed_shards_count, str(content_json)))
-        return False
+        # TODO: ES flushed may always fail for some shards
+        # Sample: XXX shards failed to finish flushed sync
+        return True
     else:
         print("All shards have finished flushed sync correctly")
         return True
