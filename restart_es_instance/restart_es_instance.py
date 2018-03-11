@@ -14,7 +14,7 @@
 ##   python ./restart_es_instance.py --es_host_mgmt 172.17.0.6 --es_port 9200 --es_host 172.17.0.5
 ## --
 ## Created : <2018-03-09>
-## Updated: Time-stamp: <2018-03-11 10:42:23>
+## Updated: Time-stamp: <2018-03-11 10:44:24>
 ##-------------------------------------------------------------------
 import sys
 import argparse, socket
@@ -51,8 +51,9 @@ def manage_es_service(action, retries=2, sleep_seconds=5):
     if return_code != 0:
         for i in range(retries):
             print("Warning: retry the command")
-            time.sleep(sleep_seconds)
             print("Sleep %d seconds" % (sleep_seconds))
+            sys.stdout.flush()
+            time.sleep(sleep_seconds)
             return_code = subprocess.call(commands)
             if return_code == 0: break
         if return_code != 0:
@@ -76,7 +77,7 @@ def update_es_allocation(es_host_mgmt, es_port, allocation_policy, retries=3, sl
     r = requests.put(url, data = json.dumps(payload))
     if r.status_code != 200:
         if retries != 0:
-            print("Warning: action fails. Having a retry")
+            print("Warning: action fails. Retrying it")
             return update_es_allocation(es_host_mgmt, es_port, allocation_policy, retries-1, sleep_seconds)
         else:
             raise Exception("Fail to run REST API: %s. Content: %s" % (url, r.content))
