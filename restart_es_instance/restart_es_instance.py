@@ -14,7 +14,7 @@
 ##   python ./restart_es_instance.py --es_host_mgmt 172.17.0.6 --es_port 9200 --es_host 172.17.0.5
 ## --
 ## Created : <2018-03-09>
-## Updated: Time-stamp: <2018-03-10 00:23:43>
+## Updated: Time-stamp: <2018-03-11 10:21:34>
 ##-------------------------------------------------------------------
 import sys
 import argparse, socket
@@ -98,7 +98,8 @@ def update_es_allocation(es_host_mgmt, es_port, allocation_policy, retries=2, sl
 def es_flushed_sync(es_host_mgmt, es_port, retries=2, sleep_seconds=5):
     url = "http://%s:%s/_flush/synced" % (es_host_mgmt, es_port)
     r = requests.post(url)
-    if r.status_code != 200: raise Exception("Fail to run REST API: %s. Content: %s" % (url, r.content))
+    # TODO: HTTP may returns with "HTTP/1.1 409 Conflict"
+    # if r.status_code != 200: raise Exception("Fail to run REST API: %s. Content: %s" % (url, r.content))
     content_json = json.loads(r.content)
     failed_shards_count = content_json["_shards"]["failed"]
 
