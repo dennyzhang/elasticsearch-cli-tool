@@ -14,7 +14,7 @@
 ##   python ./restart_es_instance.py --es_host_mgmt 172.17.0.6 --es_port 9200 --es_host 172.17.0.5
 ## --
 ## Created : <2018-03-09>
-## Updated: Time-stamp: <2018-03-12 15:09:28>
+## Updated: Time-stamp: <2018-03-12 15:14:04>
 ##-------------------------------------------------------------------
 import sys
 import argparse, socket
@@ -174,7 +174,7 @@ if __name__ == '__main__':
 
     es_host = l.es_host
     es_port = l.es_port
-    es_host_mgmt = l.es_host
+    es_host_mgmt = l.es_host_mgmt
     # get ip of eth0, if es_host is not given
     if es_host is None or es_host_mgmt is None:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
