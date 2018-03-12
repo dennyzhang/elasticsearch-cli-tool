@@ -14,7 +14,7 @@
 ##   python ./restart_es_instance.py --es_host_mgmt 172.17.0.6 --es_port 9200 --es_host 172.17.0.5
 ## --
 ## Created : <2018-03-09>
-## Updated: Time-stamp: <2018-03-12 09:02:06>
+## Updated: Time-stamp: <2018-03-12 15:09:28>
 ##-------------------------------------------------------------------
 import sys
 import argparse, socket
@@ -147,6 +147,10 @@ def restart_es_instance(es_host_mgmt, es_port, es_host):
     if not update_es_allocation(es_host_mgmt, es_port, "none"): return False
     if not es_flushed_sync(es_host_mgmt, es_port): return False
     if not manage_es_service("stop"): return False
+    sleep_seconds = 10
+    print("Sleep %d seconds, in between of es restart" % (sleep_seconds))
+    sys.stdout.flush()
+    time.sleep(sleep_seconds)
     if not manage_es_service("start"): return False
     # add sleep for es slow start
     sleep_seconds = 15
