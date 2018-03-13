@@ -10,11 +10,11 @@
 ##   3. Add 2 retries for changing allocation setting and flush
 ##   4. If retire still doesn't work, abort with errors
 ##
-##  Example: Restart es in 172.17.0.5
-##   python ./restart_es_instance.py --es_host_mgmt 172.17.0.6 --es_port 9200 --es_host 172.17.0.5
+##  Example: Restart current es instance
+##   python ./restart_es_instance.py --es_host_mgmt 172.17.0.6 --es_port 9200
 ## --
 ## Created : <2018-03-09>
-## Updated: Time-stamp: <2018-03-12 15:14:04>
+## Updated: Time-stamp: <2018-03-13 15:42:38>
 ##-------------------------------------------------------------------
 import sys
 import argparse, socket
@@ -137,7 +137,7 @@ def es_flushed_sync(es_host_mgmt, es_port, retries=3, sleep_seconds=10):
         print("All shards have finished flushed sync correctly")
         return True
 
-def restart_es_instance(es_host_mgmt, es_port, es_host):
+def restart_es_instance(es_host_mgmt, es_port):
     # TODO: better code skeleton?
     es_status = get_es_health(es_host_mgmt, es_port)
     if es_status != "green":
@@ -168,27 +168,23 @@ if __name__ == '__main__':
                         help="Interact with another ES instance for management requests. Current node may stuck into full GC.", type=str)
     parser.add_argument('--es_port', default='9200', required=False, \
                         help="server port for elasticsearch instance", type=str)
-    parser.add_argument('--es_host', required=False, \
-                        help="Restart which ES instance. Default value is ip of eth0", type=str)
     l = parser.parse_args()
 
-    es_host = l.es_host
     es_port = l.es_port
     es_host_mgmt = l.es_host_mgmt
     # get ip of eth0, if es_host is not given
-    if es_host is None or es_host_mgmt is None:
+    if es_host_mgmt is None:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
         host = s.getsockname()[0]
-        if es_host is None: es_host = host
-        if es_host_mgmt is None: es_host_mgmt = host
+        es_host_mgmt = host
 
     try:
-        if restart_es_instance(es_host_mgmt, es_port, es_host) is False:
-            print("ERROR: restart es in %s." % (es_host))
+        if restart_es_instance(es_host_mgmt, es_port) is False:
+            print("ERROR: restart es")
             sys.exit(1)
         else:
-            print("OK: restarted es in %s." % (es_host))
+            print("OK: restarted es")
             es_status = get_es_health(es_host_mgmt, es_port)
             print("ES status is %s. ES cluster should be loading shards now" % (es_status))
     except Exception as e:
