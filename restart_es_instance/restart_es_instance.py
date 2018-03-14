@@ -14,7 +14,7 @@
 ##   python ./restart_es_instance.py --es_host_mgmt 172.17.0.6 --es_port 9200
 ## --
 ## Created : <2018-03-09>
-## Updated: Time-stamp: <2018-03-13 15:42:38>
+## Updated: Time-stamp: <2018-03-14 17:37:21>
 ##-------------------------------------------------------------------
 import sys
 import argparse, socket
@@ -90,11 +90,11 @@ def update_es_allocation(es_host_mgmt, es_port, allocation_policy, retries=3, sl
     acknowledged_status = content_json["acknowledged"]
     if acknowledged_status is False:
         for i in range(retries):
-            print("Warning: retry the rest API call")
+            print("Warning: retry the rest API call of updating shards' allocation")
             time.sleep(sleep_seconds)
             print("Sleep %d seconds" % (sleep_seconds))
             r = requests.put(url, data = json.dumps(payload))
-            if r.status == 200:
+            if r.status_code == 200:
                 content_json = json.loads(r.content)
                 acknowledged_status = content_json["acknowledged"]
                 if acknowledged_status is True: break
@@ -119,7 +119,7 @@ def es_flushed_sync(es_host_mgmt, es_port, retries=3, sleep_seconds=10):
 
     if failed_shards_count != 0:
         for i in range(retries):
-            print("Warning: retry the rest API call")
+            print("Warning: retry the rest API call of flushed sync")
             time.sleep(sleep_seconds)
             print("Sleep %d seconds" % (sleep_seconds))
             r = requests.put(url)
