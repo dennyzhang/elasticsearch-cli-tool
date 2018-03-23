@@ -14,7 +14,7 @@
 ##   python ./restart_es_instance.py --es_host_mgmt 172.17.0.6 --es_port 9200
 ## --
 ## Created : <2018-03-09>
-## Updated: Time-stamp: <2018-03-14 17:37:21>
+## Updated: Time-stamp: <2018-03-23 11:43:41>
 ##-------------------------------------------------------------------
 import sys
 import argparse, socket
@@ -22,9 +22,9 @@ import requests, json
 import subprocess, time
 
 # curl $es_ip:9200/_cluster/health?pretty
-def get_es_health(es_host_mgmt, es_port):
+def get_es_health(es_host, es_port):
     # make sure es is green. And response to the query fast
-    url = "http://%s:%s/_cluster/health?pretty" % (es_host_mgmt, es_port)
+    url = "http://%s:%s/_cluster/health?pretty" % (es_host, es_port)
     r = requests.get(url)
     if r.status_code != 200: raise Exception("Fail to run REST API: %s. Content: %s" % (url, r.content))
     content_json = json.loads(r.content)

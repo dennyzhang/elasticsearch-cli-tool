@@ -17,7 +17,7 @@
 ##
 ## --
 ## Created : <2017-02-24>
-## Updated: Time-stamp: <2017-05-22 17:12:05>
+## Updated: Time-stamp: <2018-03-23 11:46:46>
 ##-------------------------------------------------------------------
 import argparse
 import requests
@@ -45,6 +45,16 @@ def setup_custom_logger(name):
     logger.addHandler(handler)
     logger.addHandler(screen_handler)
     return logger
+################################################################################
+def get_es_health(es_host, es_port):
+    # make sure es is green. And response to the query fast
+    url = "http://%s:%s/_cluster/health?pretty" % (es_host, es_port)
+    r = requests.get(url)
+    if r.status_code != 200: raise Exception("Fail to run REST API: %s. Content: %s" % (url, r.content))
+    content_json = json.loads(r.content)
+    es_status = content_json["status"]
+    # TODO: return false, if es cluster is too slow to response
+    return es_status
 
 def get_all_index_summary(es_host, es_port):
     url = "http://%s:%s/_cat/indices?v" % (es_host, es_port)
@@ -131,6 +141,10 @@ green  open   master-index-13a1f8adbec032ed68f3d035449ef48d    1   0          1 
     return index_list
 
 def force_merge_index(es_host, es_port, index_name):
+    if get_es_health(es_host, es_port) != 'green':
+        logger.error("ERROR: es is not green. Skip force merging for index(%s)" % (index_name))
+        sys.exit(1)
+
     print_index_setting(es_host, es_port, index_name)
 
     # TODO: Quit if something wrong; get time performance
@@ -181,22 +195,24 @@ if __name__ == '__main__':
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
         es_host = s.getsockname()[0]
-
-    indices_stats = get_all_index_summary(es_host, es_port)
-    logger.info("Indices summary:\n%s" % (indices_stats))
-    es_index_list = get_es_index_info(es_host, es_port, es_pattern_regexp, \
-                                      min_deleted_count, min_deleted_ratio)
-    if len(es_index_list) == 0:
-        logger.info("OK: no indices need to run force-merge.")
-    else:
-        indices_before = get_all_index_summary(es_host, es_port)
-        updated_index_list = []
-        for es_index in es_index_list:
-            index_name = es_index[0]
-            logger.info("Run force-merge for %s" % (index_name))
-            force_merge_index(es_host, es_port, index_name)
-            updated_index_list.append(index_name)
-        logger.info("OK: Run force-merge successfully on below indices: %s" % (','.join(updated_index_list)))
-
+    try:
+        indices_stats = get_all_index_summary(es_host, es_port)
+        logger.info("Indices summary:\n%s" % (indices_stats))
+        es_index_list = get_es_index_info(es_host, es_port, es_pattern_regexp, \
+                                          min_deleted_count, min_deleted_ratio)
+        if len(es_index_list) == 0:
+            logger.info("OK: no indices need to run force-merge.")
+        else:
+            indices_before = get_all_index_summary(es_host, es_port)
+            updated_index_list = []
+            for es_index in es_index_list:
+                index_name = es_index[0]
+                logger.info("Run force-merge for %s" % (index_name))
+                force_merge_index(es_host, es_port, index_name)
+                updated_index_list.append(index_name)
+            logger.info("OK: Run force-merge successfully on below indices: %s" % (','.join(updated_index_list)))
         sys_exit(es_host, es_port, 0)
+    except Exception as e:
+        logger.error("Unexpected error:%s, %s" % (sys.exc_info()[0], e))
+        sys_exit(es_host, es_port, 1)
 ## File : elasticsearch_force_merge.py ends
