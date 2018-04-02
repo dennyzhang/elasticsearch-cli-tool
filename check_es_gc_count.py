@@ -2,10 +2,11 @@
 ##-------------------------------------------------------------------
 ## File: check_es_gc_count.py
 ## Author : Denny
-## Description :
+## Description : List full gc count for all es nodes
+##   python check_es_gc_count.py --es_host 192.168.0.2 --max_full_gc 300
 ## --
 ## Created : <2018-03-20>
-## Updated: Time-stamp: <2018-03-21 00:22:07>
+## Updated: Time-stamp: <2018-04-02 13:30:43>
 ##-------------------------------------------------------------------
 import sys
 import argparse, socket
@@ -22,19 +23,21 @@ def get_es_gc_count(es_host, es_port):
     nodes_dict = content_json["nodes"]
     res = []
     for key in nodes_dict:
-        res.append([nodes_dict[key]["name"], nodes_dict[key]["jvm"]["gc"]["collectors"]["old"]["collection_count"]])
-    return sorted(res, key=lambda item: item[1], reverse=True)
+        res.append([nodes_dict[key]["name"], nodes_dict[key]["host"], nodes_dict[key]["jvm"]["gc"]["collectors"]["old"]["collection_count"]])
+    return sorted(res, key=lambda item: item[2], reverse=True)
 
 def check_es_gc_count(es_host, es_port, max_full_gc):
     l = get_es_gc_count(es_host, es_port)
     failed_nodes = []
     print("ES nodes full gc, sorted in a reverse order")
-    for [node_name, gc_count] in l:
-        print("%s\t%s" % (node_name, gc_count))
+    for [node_name, node_ip, gc_count] in l:
+        print("%s\t%s\t%s" % (node_name, node_ip, gc_count))
         if int(gc_count) >= max_full_gc:
-            failed_nodes.append(node_name)
+            failed_nodes.append((node_name, node_ip))
     if len(failed_nodes) != 0:
-        print("Error: below nodes have full gc more than %d: \n%s" % (max_full_gc, ','.join(failed_nodes)))
+        print("Error: below nodes have full gc more than %d:" % (max_full_gc))
+        for (node_name, node_ip) in failed_nodes:
+            print("%s\t%s" % (node_name, node_ip))
         return False
     return True
 
