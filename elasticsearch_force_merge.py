@@ -17,7 +17,7 @@
 ##
 ## --
 ## Created : <2017-02-24>
-## Updated: Time-stamp: <2018-03-23 11:46:46>
+## Updated: Time-stamp: <2018-04-11 09:34:48>
 ##-------------------------------------------------------------------
 import argparse
 import requests
@@ -132,11 +132,9 @@ green  open   master-index-13a1f8adbec032ed68f3d035449ef48d    1   0          1 
 
             total_doc_count = int(l[5])
             deleted_doc_count = int(l[6])
-            if min_deleted_count != 0 and min_deleted_ratio != 0:
-                if (deleted_doc_count < min_deleted_count):
-                    continue
-                if float(deleted_doc_count)/total_doc_count < min_deleted_ratio:
-                    continue
+            if (deleted_doc_count < min_deleted_count): continue
+            if min_deleted_ratio != 0 and float(deleted_doc_count)/total_doc_count < min_deleted_ratio:
+                continue
             index_list.append([index_name, total_doc_count, deleted_doc_count])
     return index_list
 
