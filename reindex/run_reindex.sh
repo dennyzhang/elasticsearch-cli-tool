@@ -7,7 +7,7 @@
 ##
 ## --
 ## Created : <2017-08-27>
-## Updated: Time-stamp: <2017-09-08 23:30:46>
+## Updated: Time-stamp: <2018-06-04 10:27:41>
 ##-------------------------------------------------------------------
 . library.sh
 
@@ -114,6 +114,8 @@ if [ "$avoid_update_alias" = "no" ]; then
         exit 1
     fi
 fi
+
+list_indices "$es_ip" "$es_port"
 
 if [ "$avoid_close_index" = "no" ]; then
     # Close index: only after no requests access old index, we can close it
